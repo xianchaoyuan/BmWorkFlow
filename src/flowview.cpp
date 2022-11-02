@@ -1,7 +1,16 @@
 #include "flowview.h"
 #include "flowscene.h"
+#include "node.h"
+#include "nodegraphicsobject.h"
 
 #include <QtWidgets>
+
+FlowView::FlowView(FlowScene *scene, QWidget *parent)
+    : FlowView(parent)
+{
+    m_scene_ = scene;
+    setScene(scene);
+}
 
 FlowView::FlowView(QWidget *parent)
     : QGraphicsView(parent)
@@ -42,12 +51,6 @@ void FlowView::zoomToRect(const QRectF &rect)
 
 }
 
-FlowView::FlowView(FlowScene *scene, QWidget *parent)
-    : FlowView(parent)
-{
-    setScene(scene);
-}
-
 void FlowView::contextMenuEvent(QContextMenuEvent *event)
 {
     if (itemAt(event->pos())) {
@@ -74,10 +77,42 @@ void FlowView::contextMenuEvent(QContextMenuEvent *event)
     auto *treeViewAction = new QWidgetAction(&modelMenu);
     treeViewAction->setDefaultWidget(treeView);
 
-
-
     modelMenu.addAction(treeViewAction);
 
+    QMap<QString, QTreeWidgetItem *> topLevelItems;
+    for (auto const &cat : m_scene_->registry().categories()) {
+        auto *catItem = new QTreeWidgetItem(treeView);
+        catItem->setText(0, cat);
+        catItem->setData(0, Qt::UserRole, skipText);
+        topLevelItems[cat] = catItem;
+    }
+
+    for (auto const &assoc : m_scene_->registry().registeredModelsCategoryAssociation()) {
+        auto *parent = topLevelItems[assoc.second];
+        auto *modelItem = new QTreeWidgetItem(parent);
+        modelItem->setText(0, assoc.first);
+        modelItem->setData(0, Qt::UserRole, assoc.first);
+    }
+    treeView->expandAll();
+
+    connect(treeView, &QTreeWidget::itemClicked, [&](QTreeWidgetItem *item, int) {
+        QString modelName = item->data(0, Qt::UserRole).toString();
+        if (modelName == skipText) {
+            return;
+        }
+
+        auto type = m_scene_->registry().create(modelName);
+        if (type) {
+            auto &node = m_scene_->createNode(std::move(type));
+            QPoint pos = event->pos();
+            QPointF posView = mapToScene(pos);
+            node.nodeGraphicsObject().setPos(posView);
+        } else {
+            qDebug() << "Model not found";
+        }
+
+        modelMenu.close();
+    });
 
     searchLe->setFocus();
     modelMenu.exec(event->globalPos());
@@ -126,4 +161,14 @@ void FlowView::keyReleaseEvent(QKeyEvent *event)
         break;
     }
     QGraphicsView::keyReleaseEvent(event);
+}
+
+void FlowView::mousePressEvent(QMouseEvent *event)
+{
+
+}
+
+void FlowView::mouseMoveEvent(QMouseEvent *event)
+{
+
 }

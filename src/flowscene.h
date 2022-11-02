@@ -7,6 +7,9 @@
 
 #include "datamodelregistry.h"
 
+class Node;
+class NodeGraphicsObject;
+
 /**
  * @brief 流场景
  */
@@ -16,7 +19,13 @@ class FlowScene : public QGraphicsScene
 
 public:
     explicit FlowScene(std::shared_ptr<DataModelRegistry> registory, QObject *parent = nullptr);
+    FlowScene(QObject *parent = nullptr);
     ~FlowScene() = default;
+
+    DataModelRegistry &registry() const;
+    void setRegistry(std::shared_ptr<DataModelRegistry> registry);
+
+    Node &createNode(std::unique_ptr<NodeDataModel> &&dataModel);
 
 private:
     std::shared_ptr<DataModelRegistry> m_model_registory_;

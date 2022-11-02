@@ -14,8 +14,8 @@ class FlowView : public QGraphicsView
     Q_OBJECT
 
 public:
-    FlowView(QWidget *parent = nullptr);
     explicit FlowView(FlowScene *scene, QWidget *parent = nullptr);
+    FlowView(QWidget *parent = nullptr);
     FlowView(const FlowView &) = delete;
     FlowView operator=(const FlowView &) = delete;
 
@@ -30,6 +30,12 @@ protected:
     void wheelEvent(QWheelEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+
+
+private:
+    FlowScene *m_scene_{};
 };
 
 #endif // FLOWVIEW_H

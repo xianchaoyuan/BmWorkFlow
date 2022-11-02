@@ -34,10 +34,17 @@ file(GLOB_RECURSE CPP_HEADER_FILES
 
 set(CPP_SOURCE_FILES
     main.cpp
+    src/node.cpp
     src/nodedatamodel.cpp
+    src/nodegraphicsobject.cpp
+    src/nodepainter.cpp
+    src/nodegeometry.cpp
     src/datamodelregistry.cpp
     src/flowscene.cpp
     src/flowview.cpp
+
+    # 测试
+    src/imageloadermodel.cpp
 )
 
 add_executable(${PROJECT_NAME}

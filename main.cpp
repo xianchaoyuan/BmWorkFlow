@@ -3,10 +3,14 @@
 
 #include "flowscene.h"
 #include "flowview.h"
+#include "imageloadermodel.h"
 
 static std::shared_ptr<DataModelRegistry> registerDataModels()
 {
     auto ret = std::make_shared<DataModelRegistry>();
+
+    // BmTODO 添加需要注册的model
+    ret->registerModel<ImageLoaderModel>();
 
     return ret;
 }
