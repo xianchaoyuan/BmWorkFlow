@@ -35,7 +35,7 @@ void NodeGraphicsObject::paint(QPainter *painter,
 {
     painter->setClipRect(option->exposedRect);
 
-    NodePainter::paint();
+    NodePainter::paint(painter, m_node_, m_scene_);
 }
 
 QVariant NodeGraphicsObject::itemChange(GraphicsItemChange change, const QVariant &value)

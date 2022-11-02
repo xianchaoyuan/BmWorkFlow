@@ -31,6 +31,7 @@ Node &FlowScene::createNode(std::unique_ptr<NodeDataModel> &&dataModel)
 
     node->setGraphicsObject(std::move(ngo));
 
-    auto nodePtr = node.get();
+    auto *nodePtr = node.get();
+    m_nodes_[node->id()] = std::move(node);
     return *nodePtr;
 }

@@ -33,7 +33,6 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
 
-
 private:
     FlowScene *m_scene_{};
 };

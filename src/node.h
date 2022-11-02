@@ -34,11 +34,12 @@ public:
     NodeDataModel *nodeDataModel() const;
 
 private:
-    QUuid m_uuid_;
-    NodeGeometry m_geometry_;
-
+    //! 声明顺序不可改变
     std::unique_ptr<NodeDataModel> m_data_model_;
     std::unique_ptr<NodeGraphicsObject> m_graphics_object_;
+
+    QUuid m_uuid_;
+    NodeGeometry m_geometry_;
 };
 
 #endif // NODE_H
