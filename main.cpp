@@ -4,6 +4,7 @@
 #include "flowscene.h"
 #include "flowview.h"
 #include "imageloadermodel.h"
+#include "imageshowmodel.h"
 
 static std::shared_ptr<DataModelRegistry> registerDataModels()
 {
@@ -11,6 +12,7 @@ static std::shared_ptr<DataModelRegistry> registerDataModels()
 
     // BmTODO 添加需要注册的model
     ret->registerModel<ImageLoaderModel>();
+    ret->registerModel<ImageShowModel>();
 
     return ret;
 }

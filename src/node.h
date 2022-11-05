@@ -5,7 +5,9 @@
 
 #include <QObject>
 #include <QUuid>
+#include <QDebug>
 
+#include "nodestate.h"
 #include "nodegeometry.h"
 
 class NodeDataModel;
@@ -31,6 +33,9 @@ public:
     const NodeGraphicsObject &nodeGraphicsObject() const;
     void setGraphicsObject(std::unique_ptr<NodeGraphicsObject> &&graphics);
 
+    NodeState &nodeState();
+    const NodeState &nodeState() const;
+
     NodeDataModel *nodeDataModel() const;
 
 private:
@@ -39,6 +44,7 @@ private:
     std::unique_ptr<NodeGraphicsObject> m_graphics_object_;
 
     QUuid m_uuid_;
+    NodeState m_state_;
     NodeGeometry m_geometry_;
 };
 

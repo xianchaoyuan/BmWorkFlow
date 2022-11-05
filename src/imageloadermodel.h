@@ -30,6 +30,7 @@ public:
 
     NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
 
+//    QWidget *embeddedWidget() override { return nullptr; }
     QWidget *embeddedWidget() override { return _label; }
 
     bool resizable() const override { return true; }

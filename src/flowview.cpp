@@ -15,16 +15,24 @@ FlowView::FlowView(FlowScene *scene, QWidget *parent)
 FlowView::FlowView(QWidget *parent)
     : QGraphicsView(parent)
 {
-    setBackgroundBrush(Qt::gray);
+//    setBackgroundBrush(Qt::black);
+
+    setDragMode(QGraphicsView::ScrollHandDrag);
+    setRenderHint(QPainter::Antialiasing);
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+
+    setCacheMode(QGraphicsView::CacheBackground);
+    setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
 }
 
 void FlowView::zoomIn()
 {
-    double const step   = 1.2;
-    double const factor = std::pow(step, 1.0);
+    const double step   = 1.2;
+    const double factor = std::pow(step, 1.0);
 
     QTransform t = transform();
     if (t.m11() > 2.0)
@@ -35,8 +43,8 @@ void FlowView::zoomIn()
 
 void FlowView::zoomOut()
 {
-    double const step   = 1.2;
-    double const factor = std::pow(step, -1.0);
+    const double step   = 1.2;
+    const double factor = std::pow(step, -1.0);
 
     scale(factor, factor);
 }
@@ -80,14 +88,14 @@ void FlowView::contextMenuEvent(QContextMenuEvent *event)
     modelMenu.addAction(treeViewAction);
 
     QMap<QString, QTreeWidgetItem *> topLevelItems;
-    for (auto const &cat : m_scene_->registry().categories()) {
+    for (const auto &cat : m_scene_->registry().categories()) {
         auto *catItem = new QTreeWidgetItem(treeView);
         catItem->setText(0, cat);
         catItem->setData(0, Qt::UserRole, skipText);
         topLevelItems[cat] = catItem;
     }
 
-    for (auto const &assoc : m_scene_->registry().registeredModelsCategoryAssociation()) {
+    for (const auto &assoc : m_scene_->registry().registeredModelsCategoryAssociation()) {
         auto *parent = topLevelItems[assoc.second];
         auto *modelItem = new QTreeWidgetItem(parent);
         modelItem->setText(0, assoc.first);
@@ -127,7 +135,7 @@ void FlowView::wheelEvent(QWheelEvent *event)
         return;
     }
 
-    double const d = delta.y() / std::abs(delta.y());
+    const double d = delta.y() / std::abs(delta.y());
     if (d > 0.0)
         zoomIn();
     else
@@ -165,10 +173,10 @@ void FlowView::keyReleaseEvent(QKeyEvent *event)
 
 void FlowView::mousePressEvent(QMouseEvent *event)
 {
-
+    QGraphicsView::mousePressEvent(event);
 }
 
 void FlowView::mouseMoveEvent(QMouseEvent *event)
 {
-
+    QGraphicsView::mouseMoveEvent(event);
 }

@@ -5,6 +5,7 @@
 
 class Node;
 class FlowScene;
+class NodeState;
 class NodeGeometry;
 class NodeDataModel;
 class NodeGraphicsObject;
@@ -18,36 +19,40 @@ public:
     NodePainter() = default;
 
     static void paint(QPainter *painter, Node &node, FlowScene const &scene);
+
+    //! 边框
     static void drawNodeRect(QPainter *painter,
-                             NodeGeometry const &geom,
-                             NodeDataModel const *model,
-                             NodeGraphicsObject const &graphicsObject);
+                             const NodeGeometry &geom,
+                             const NodeDataModel *model,
+                             const NodeGraphicsObject &graphicsObject);
 
-    static void drawModelName(QPainter *painter,
-                              NodeGeometry const &geom,
-                              NodeDataModel const *model);
+    //! 模块说明
+    static void drawNodeCaption(QPainter *painter,
+                              const NodeGeometry &geom,
+                              const NodeDataModel *model);
 
+    //! 条目标签
     static void drawEntryLabels(QPainter *painter,
-                                NodeGeometry const &geom,
-                                NodeDataModel const *model);
+                                const NodeGeometry &geom,
+                                const NodeDataModel *model);
 
+    //! 连接点
     static void drawConnectionPoints(QPainter *painter,
-                                     NodeGeometry const &geom,
-                                     NodeDataModel const *model,
-                                     FlowScene const &scene);
+                                     const NodeGeometry &geom,
+                                     const NodeState &state,
+                                     const NodeDataModel *model,
+                                     const FlowScene &scene);
 
+    //! 实心连接点
     static void drawFilledConnectionPoints(QPainter *painter,
-                                           NodeGeometry const &geom,
-                                           NodeDataModel const *model);
+                                           const NodeGeometry &geom,
+                                           const NodeState &state,
+                                           const NodeDataModel *model);
 
+    //! resize边框
     static void drawResizeRect(QPainter *painter,
-                               NodeGeometry const &geom,
-                               NodeDataModel const *model);
-
-    static void drawValidationRect(QPainter *painter,
-                                   NodeGeometry const & geom,
-                                   NodeDataModel const *model,
-                                   NodeGraphicsObject const &graphicsObject);
+                               const NodeGeometry &geom,
+                               const NodeDataModel *model);
 };
 
 #endif // NODEPAINTER_H

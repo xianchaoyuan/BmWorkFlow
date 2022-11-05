@@ -47,14 +47,24 @@ public:
     void setDraggingPosition(QPointF const &pos) { m_dragging_pos_ = pos; }
 
 public:
-    QRectF entryBoundingRect() const;
     QRectF boundingRect() const;
+    QRect resizeRect() const;
 
     //! 无条件更新大小
     void recalculateSize() const;
 
     //! 字体改变，更新大小
     void recalculateSize(QFont const &font) const;
+
+    //! port位置
+    QPointF portScenePosition(PortIndex index,
+                              PortType portType,
+                              const QTransform &t = QTransform()) const;
+    //! 检查命中场景点
+    PortIndex checkHitScenePoint(PortType portType,
+                                 const QPointF &scenePoint,
+                                 const QTransform &sceneTransform = QTransform()) const;
+
 
 private:
     //! 标题

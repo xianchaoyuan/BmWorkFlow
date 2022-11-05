@@ -1,4 +1,5 @@
-#pragma once
+#ifndef QUUIDSTDHASH_H
+#define QUUIDSTDHASH_H
 
 #include <functional>
 
@@ -17,3 +18,4 @@ struct hash<QUuid>
 };
 }
 
+#endif // QUUIDSTDHASH_H

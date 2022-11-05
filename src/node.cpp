@@ -6,10 +6,11 @@
 Node::Node(std::unique_ptr<NodeDataModel> &&dataModel)
     : m_uuid_(QUuid::createUuid()),
       m_data_model_(std::move(dataModel)),
+      m_state_(m_data_model_),
       m_geometry_(m_data_model_),
       m_graphics_object_(nullptr)
 {
-
+    m_geometry_.recalculateSize();
 }
 
 const QUuid &Node::id() const
@@ -40,6 +41,17 @@ const NodeGraphicsObject &Node::nodeGraphicsObject() const
 void Node::setGraphicsObject(std::unique_ptr<NodeGraphicsObject> &&graphics)
 {
     m_graphics_object_ = std::move(graphics);
+    m_geometry_.recalculateSize();
+}
+
+NodeState &Node::nodeState()
+{
+    return m_state_;
+}
+
+const NodeState &Node::nodeState() const
+{
+    return m_state_;
 }
 
 NodeDataModel *Node::nodeDataModel() const
