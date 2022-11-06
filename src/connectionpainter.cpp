@@ -131,7 +131,7 @@ static void drawNormalLine(QPainter *painter, Connection const &connection)
     bool gradientColor = false;
 
     // geometry
-    ConnectionGeometry const &geom = connection.connectionGeometry();
+    const ConnectionGeometry &geom = connection.connectionGeometry();
 
     const double lineWidth = 3.0;
 
@@ -152,7 +152,7 @@ static void drawNormalLine(QPainter *painter, Connection const &connection)
         p.setColor(cOut);
         painter->setPen(p);
 
-        unsigned int const segments = 60;
+        const unsigned int segments = 60;
 
         for (unsigned int i = 0ul; i < segments; ++i) {
             double ratioPrev = double(i) / segments;
@@ -195,8 +195,8 @@ static void drawNormalLine(QPainter *painter, Connection const &connection)
 
 void ConnectionPainter::paint(QPainter *painter, Connection const &connection)
 {
-    drawHoveredOrSelected(painter, connection);
-    drawSketchLine(painter, connection);
+//    drawHoveredOrSelected(painter, connection);
+//    drawSketchLine(painter, connection);
     drawNormalLine(painter, connection);
 
 #ifdef NODE_DEBUG_DRAWING

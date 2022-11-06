@@ -1,4 +1,6 @@
 #include "connection.h"
+#include "node.h"
+#include "nodegraphicsobject.h"
 
 Connection::Connection(PortType portType, Node &node, PortIndex portIndex)
     : m_uuid_(QUuid::createUuid()),
@@ -7,6 +9,7 @@ Connection::Connection(PortType portType, Node &node, PortIndex portIndex)
       m_state_()
 {
     setNodeToPort(node, portType, portIndex);
+    setRequiredPort(oppositePort(portType));
 }
 
 ConnectionGeometry &Connection::connectionGeometry()
@@ -32,6 +35,24 @@ const ConnectionGraphicsObject &Connection::connectionGraphicsObject() const
 void Connection::setGraphicsObject(std::unique_ptr<ConnectionGraphicsObject> &&graphics)
 {
     m_graphics_object_ = std::move(graphics);
+
+    if (requiredPort() != PortType::None) {
+
+        PortType attachedPort = oppositePort(requiredPort());
+        PortIndex attachedPortIndex = getPortIndex(attachedPort);
+
+        auto node = getNode(attachedPort);
+
+        QTransform nodeSceneTransform =
+                node->nodeGraphicsObject().sceneTransform();
+        QPointF pos = node->nodeGeometry().portScenePosition(attachedPortIndex,
+                                                             attachedPort,
+                                                             nodeSceneTransform);
+
+        m_graphics_object_->setPos(pos);
+    }
+
+    m_graphics_object_->move();
 }
 
 Node *Connection::getNode(PortType portType) const
@@ -95,17 +116,17 @@ PortIndex Connection::getPortIndex(PortType portType) const
 
 void Connection::setRequiredPort(PortType portType)
 {
-    m_state_.setRequiredPort(dragging);
+    m_state_.setRequiredPort(portType);
 
-    switch (dragging)
+    switch (portType)
     {
     case PortType::Out:
-        m_in_node_  = nullptr;
+        m_out_node_  = nullptr;
         m_out_port_index_ = INVALID;
         break;
 
     case PortType::In:
-        m_out_node_  = nullptr;
+        m_in_node_  = nullptr;
         m_in_port_index_ = INVALID;
         break;
 
@@ -116,7 +137,7 @@ void Connection::setRequiredPort(PortType portType)
 
 PortType Connection::requiredPort() const
 {
-
+    return m_state_.requiredPort();
 }
 
 bool Connection::complete() const

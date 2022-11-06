@@ -87,11 +87,10 @@ void ConnectionGraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     //-------------------
     QPointF offset = event->pos() - event->lastPos();
-//    auto requiredPort = m_connection_.requiredPort();
-//    if (requiredPort != PortType::None) {
-//        m_connection_.connectionGeometry().moveEndPoint(requiredPort, offset);
-//    }
-    m_connection_.connectionGeometry().moveEndPoint(PortType::Out, offset);
+    auto requiredPort = m_connection_.requiredPort();
+    if (requiredPort != PortType::None) {
+        m_connection_.connectionGeometry().moveEndPoint(requiredPort, offset);
+    }
     //-------------------
 
     update();
