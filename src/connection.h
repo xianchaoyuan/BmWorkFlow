@@ -30,26 +30,41 @@ public:
     Connection(const Connection &other) = delete;
     Connection operator=(const Connection &other) = delete;
 
+    //! state
+    const ConnectionState &connectionState() const;
+    ConnectionState &connectionState();
+
+    //! geometry
     ConnectionGeometry &connectionGeometry();
     const ConnectionGeometry &connectionGeometry() const;
 
+    //! graphics object
     ConnectionGraphicsObject &connectionGraphicsObject();
     const ConnectionGraphicsObject &connectionGraphicsObject() const;
     void setGraphicsObject(std::unique_ptr<ConnectionGraphicsObject> &&graphics);
 
+    //! nodes
+    bool complete() const {
+        return m_in_node_ != nullptr && m_out_node_ != nullptr;
+    }
     Node *getNode(PortType portType) const;
     Node* &getNode(PortType portType);
-
-    PortIndex getPortIndex(PortType portType) const;
-
-public:
-    QUuid id() const { return m_uuid_; }
+    void setNodeToPort(Node &node, PortType portType, PortIndex portIndex);
+    void removeFromNodes() const;
 
     void setRequiredPort(PortType portType);
     PortType requiredPort() const;
 
-    bool complete() const;
-    void setNodeToPort(Node &node, PortType portType, PortIndex portIndex);
+    PortIndex getPortIndex(PortType portType) const;
+
+    //! 节点数据类型
+    NodeDataType dataType(PortType portType) const;
+
+    //! 类型转换器
+    void setTypeConverter(TypeConverter converter);
+
+public:
+    QUuid id() const { return m_uuid_; }
 
 private:
     QUuid m_uuid_;
@@ -65,6 +80,8 @@ private:
     ConnectionState m_state_;
 
     std::unique_ptr<ConnectionGraphicsObject> m_graphics_object_;
+
+    TypeConverter m_converter_;
 };
 
 #endif // CONNECTION_H

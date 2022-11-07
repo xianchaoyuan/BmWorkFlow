@@ -3,8 +3,10 @@
 #include "connection.h"
 #include "connectiongeometry.h"
 #include "connectionpainter.h"
+#include "nodeconnectioninteraction.h"
 #include "nodegraphicsobject.h"
 
+#include <QGraphicsView>
 #include <QGraphicsBlurEffect>
 #include <QStyleOptionGraphicsItem>
 
@@ -33,8 +35,8 @@ void ConnectionGraphicsObject::move()
 {
     for (PortType portType: { PortType::In, PortType::Out } ) {
         if (auto node = m_connection_.getNode(portType)) {
-            auto const &nodeGraphics = node->nodeGraphicsObject();
-            auto const &nodeGeom = node->nodeGeometry();
+            const auto &nodeGraphics = node->nodeGraphicsObject();
+            const auto &nodeGeom = node->nodeGeometry();
             QPointF scenePos = nodeGeom.portScenePosition(m_connection_.getPortIndex(portType),
                                                portType,
                                                nodeGraphics.sceneTransform());
@@ -85,13 +87,13 @@ void ConnectionGraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     prepareGeometryChange();
 
-    //-------------------
+    // BmTODO 添加port靠近扩大
+
     QPointF offset = event->pos() - event->lastPos();
     auto requiredPort = m_connection_.requiredPort();
     if (requiredPort != PortType::None) {
         m_connection_.connectionGeometry().moveEndPoint(requiredPort, offset);
     }
-    //-------------------
 
     update();
     event->accept();
@@ -101,6 +103,21 @@ void ConnectionGraphicsObject::mouseReleaseEvent(QGraphicsSceneMouseEvent *event
 {
     ungrabMouse();
     event->accept();
+
+    // BmTODO 判断释放时是否在port上
+    auto node = locateNodeAt(event->scenePos(),
+                             m_scene_,
+                             m_scene_.views()[0]->transform());
+
+    NodeConnectionInteraction interaction(*node, m_connection_, m_scene_);
+    if (node && interaction.tryConnect()) {
+        // BmTODO 恢复端口扩大状态
+    }
+
+    // 删除当前连接
+    if (m_connection_.connectionState().requiresPort()) {
+        m_scene_.deleteConnection(m_connection_);
+    }
 }
 
 void ConnectionGraphicsObject::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

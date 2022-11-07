@@ -9,8 +9,8 @@
 
 static QPainterPath cubicPath(ConnectionGeometry const &geom)
 {
-    QPointF const &source = geom.source();
-    QPointF const &sink   = geom.sink();
+    const QPointF &source = geom.source();
+    const QPointF &sink   = geom.sink();
 
     auto c1c2 = geom.pointsC1C2();
 
@@ -25,7 +25,7 @@ QPainterPath ConnectionPainter::getPainterStroke(ConnectionGeometry const &geom)
 {
     auto cubic = cubicPath(geom);
 
-    QPointF const &source = geom.source();
+    const QPointF &source = geom.source();
     QPainterPath result(source);
 
     unsigned segments = 20;
@@ -49,8 +49,8 @@ static void debugDrawing(QPainter *painter, Connection const &connection)
             connection.connectionGeometry();
 
     {
-        QPointF const &source = geom.source();
-        QPointF const &sink   = geom.sink();
+        const QPointF &source = geom.source();
+        const QPointF &sink   = geom.sink();
 
         auto points = geom.pointsC1C2();
 
@@ -206,8 +206,8 @@ void ConnectionPainter::paint(QPainter *painter, Connection const &connection)
     // draw end points
     ConnectionGeometry const &geom = connection.connectionGeometry();
 
-    QPointF const &source = geom.source();
-    QPointF const &sink   = geom.sink();
+    const QPointF &source = geom.source();
+    const QPointF &sink   = geom.sink();
 
     const double pointDiameter = 8.0;
 

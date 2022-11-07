@@ -30,11 +30,13 @@ public:
 
     //! 节点创建
     Node &createNode(std::unique_ptr<NodeDataModel> &&dataModel);
+    void removeNode(Node &node);
 
     //! 连接创建
     std::shared_ptr<Connection> createConnection(PortType connectedPort,
                                                  Node &node,
                                                  PortIndex portIndex);
+    void deleteConnection(const Connection &connection);
 
 public:
     void clearScene();

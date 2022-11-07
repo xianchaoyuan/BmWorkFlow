@@ -58,3 +58,14 @@ NodeDataModel *Node::nodeDataModel() const
 {
     return m_data_model_.get();
 }
+
+void Node::onDataUpdated(PortIndex index)
+{
+    auto nodeData = m_data_model_->outData(index);
+
+    const auto &connections =
+            m_state_.connections(PortType::Out, index);
+
+//    for (const auto &c : connections)
+//        c.second->propagateData(nodeData);
+}

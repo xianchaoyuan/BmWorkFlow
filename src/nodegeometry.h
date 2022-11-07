@@ -43,8 +43,8 @@ public:
     unsigned int nSources() const;
     unsigned int nSinks() const;
 
-    QPointF const &draggingPos() const { return m_dragging_pos_; }
-    void setDraggingPosition(QPointF const &pos) { m_dragging_pos_ = pos; }
+    const QPointF &draggingPos() const { return m_dragging_pos_; }
+    void setDraggingPosition(const QPointF &pos) { m_dragging_pos_ = pos; }
 
 public:
     QRectF boundingRect() const;

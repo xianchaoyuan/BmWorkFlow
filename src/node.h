@@ -38,6 +38,10 @@ public:
 
     NodeDataModel *nodeDataModel() const;
 
+public slots:
+    //! 从模型的out索引端口获取数据并将其传播到连接
+    void onDataUpdated(PortIndex index);
+
 private:
     //! 声明顺序不可改变
     std::unique_ptr<NodeDataModel> m_data_model_;

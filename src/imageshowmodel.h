@@ -29,6 +29,8 @@ public:
 
     NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
 
+    std::shared_ptr<NodeData> outData(PortIndex port) override;
+
     QWidget *embeddedWidget() override { return _label; }
 
     bool resizable() const override { return true; }

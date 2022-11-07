@@ -41,6 +41,20 @@ Node &FlowScene::createNode(std::unique_ptr<NodeDataModel> &&dataModel)
     return *nodePtr;
 }
 
+void FlowScene::removeNode(Node &node)
+{
+    for(auto portType: { PortType::In, PortType::Out }) {
+        auto nodeState = node.nodeState();
+        const auto &nodeEntries = nodeState.getEntries(portType);
+        for (auto &connections : nodeEntries) {
+            for (const auto &pair : connections)
+                deleteConnection(*pair.second);
+        }
+    }
+
+    m_nodes_.erase(node.id());
+}
+
 std::shared_ptr<Connection> FlowScene::createConnection(PortType connectedPort, Node &node, PortIndex portIndex)
 {
     auto connection = std::make_shared<Connection>(connectedPort, node, portIndex);
@@ -50,6 +64,15 @@ std::shared_ptr<Connection> FlowScene::createConnection(PortType connectedPort, 
     m_connections_[connection->id()] = connection;
 
     return connection;
+}
+
+void FlowScene::deleteConnection(const Connection &connection)
+{
+    auto it = m_connections_.find(connection.id());
+    if (it != m_connections_.end()) {
+        connection.removeFromNodes();
+        m_connections_.erase(it);
+    }
 }
 
 void FlowScene::clearScene()
@@ -66,15 +89,13 @@ void FlowScene::clearScene()
 Node *locateNodeAt(QPointF scenePoint, FlowScene &scene, const QTransform &viewTransform)
 {
     // items under cursor
-    QList<QGraphicsItem*> items =
-            scene.items(scenePoint,
-                        Qt::IntersectsItemShape,
-                        Qt::DescendingOrder,
-                        viewTransform);
+    QList<QGraphicsItem*> items = scene.items(scenePoint,
+                                              Qt::IntersectsItemShape,
+                                              Qt::DescendingOrder,
+                                              viewTransform);
 
-    //! items convertable to NodeGraphicsObject
+    // 可转换为NodeGraphicsObject的项
     std::vector<QGraphicsItem*> filteredItems;
-
     std::copy_if(items.begin(),
                  items.end(),
                  std::back_inserter(filteredItems),

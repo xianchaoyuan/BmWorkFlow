@@ -45,6 +45,7 @@ set(CPP_SOURCE_FILES
     src/connectionpainter.cpp
     src/connectiongeometry.cpp
     src/connectiongraphicsobject.cpp
+    src/nodeconnectioninteraction.cpp
     src/datamodelregistry.cpp
     src/flowscene.cpp
     src/flowview.cpp

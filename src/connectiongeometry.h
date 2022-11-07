@@ -19,8 +19,8 @@ public:
     QRectF boundingRect() const;
 
     const QPointF &getEndPoint(PortType portType) const;
-    void setEndPoint(PortType portType, QPointF const &point);
-    void moveEndPoint(PortType portType, QPointF const &offset);
+    void setEndPoint(PortType portType, const QPointF &point);
+    void moveEndPoint(PortType portType, const QPointF &offset);
 
     QPointF source() const { return m_out_; }
     QPointF sink() const { return m_in_; }

@@ -25,6 +25,8 @@ public slots:
     void zoomAll();
     void zoomToRect(const QRectF &rect);
 
+    void deleteSelectedNodes();
+
 protected:
     void contextMenuEvent(QContextMenuEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
@@ -35,6 +37,11 @@ protected:
 
 private:
     FlowScene *m_scene_{};
+
+    QAction *m_act_clear_selection_{};
+    QAction *m_act_delete_selection_{};
+
+    QPointF m_click_pos_;
 };
 
 #endif // FLOWVIEW_H

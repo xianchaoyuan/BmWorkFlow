@@ -11,13 +11,13 @@ struct NodeDataType
     QString id;
     QString name;
 
-//    friend bool operator<(const NodeDataType &node1, const NodeDataType &node2) {
-//        return node1.id < node2.id;
-//    }
+    friend bool operator<(const NodeDataType &node1, const NodeDataType &node2) {
+        return node1.id < node2.id;
+    }
 
-//    friend bool operator==(const NodeDataType &node1, const NodeDataType &node2) {
-//        return node1.id == node2.id;
-//    }
+    friend bool operator==(const NodeDataType &node1, const NodeDataType &node2) {
+        return node1.id == node2.id;
+    }
 };
 
 /**

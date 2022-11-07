@@ -10,6 +10,17 @@ FlowView::FlowView(FlowScene *scene, QWidget *parent)
 {
     m_scene_ = scene;
     setScene(scene);
+
+    // setup actions
+    m_act_clear_selection_ = new QAction(QStringLiteral("Clear Selection"), this);
+    m_act_clear_selection_->setShortcut(Qt::Key_Escape);
+    connect(m_act_clear_selection_, &QAction::triggered, m_scene_, &QGraphicsScene::clearSelection);
+    addAction(m_act_clear_selection_);
+
+    m_act_delete_selection_ = new QAction(QStringLiteral("Delete Selection"), this);
+    m_act_delete_selection_->setShortcut(Qt::Key_Delete);
+    connect(m_act_delete_selection_, &QAction::triggered, this, &FlowView::deleteSelectedNodes);
+    addAction(m_act_delete_selection_);
 }
 
 FlowView::FlowView(QWidget *parent)
@@ -57,6 +68,19 @@ void FlowView::zoomAll()
 void FlowView::zoomToRect(const QRectF &rect)
 {
 
+}
+
+void FlowView::deleteSelectedNodes()
+{
+    for (auto *item : m_scene_->selectedItems()) {
+        if (auto c = qgraphicsitem_cast<ConnectionGraphicsObject*>(item))
+            m_scene_->deleteConnection(c->connection());
+    }
+
+    for (auto *item : m_scene_->selectedItems()) {
+        if (auto n = qgraphicsitem_cast<NodeGraphicsObject*>(item))
+            m_scene_->removeNode(n->node());
+    }
 }
 
 void FlowView::contextMenuEvent(QContextMenuEvent *event)
@@ -174,9 +198,21 @@ void FlowView::keyReleaseEvent(QKeyEvent *event)
 void FlowView::mousePressEvent(QMouseEvent *event)
 {
     QGraphicsView::mousePressEvent(event);
+
+    if (event->button() == Qt::LeftButton) {
+        m_click_pos_ = mapToScene(event->pos());
+    }
 }
 
 void FlowView::mouseMoveEvent(QMouseEvent *event)
 {
     QGraphicsView::mouseMoveEvent(event);
+
+    if (scene()->mouseGrabberItem() == nullptr && event->buttons() == Qt::LeftButton) {
+        // 确保未按下shift
+        if ((event->modifiers() & Qt::ShiftModifier) == 0) {
+            QPointF difference = m_click_pos_ - mapToScene(event->pos());
+            setSceneRect(sceneRect().translated(difference.x(), difference.y()));
+        }
+    }
 }

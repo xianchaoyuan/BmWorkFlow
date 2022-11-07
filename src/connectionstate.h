@@ -14,27 +14,21 @@ class Node;
 class ConnectionState
 {
 public:
-    explicit ConnectionState(PortType port = PortType::None) : _requiredPort(port) {}
+    explicit ConnectionState(PortType port = PortType::None) : m_required_port_(port) {}
     ConnectionState(const ConnectionState &) = delete;
     ConnectionState operator=(const ConnectionState &) = delete;
     ~ConnectionState();
 
 public:
-    void setRequiredPort(PortType end) { _requiredPort = end; }
-    PortType requiredPort() const { return _requiredPort; }
-    bool requiresPort() const { return _requiredPort != PortType::None; }
-    void setNoRequiredPort() { _requiredPort = PortType::None; }
+    //! 需要端口
+    void setRequiredPort(PortType end) { m_required_port_ = end; }
+    PortType requiredPort() const { return m_required_port_; }
 
-public:
-    void interactWithNode(Node *node);
-    void setLastHoveredNode(Node *node);
-
-    Node *lastHoveredNode() const { return _lastHoveredNode; }
-    void resetLastHoveredNode();
+    //! 是否需要连接端口
+    bool requiresPort() const { return m_required_port_ != PortType::None; }
 
 private:
-    PortType _requiredPort;
-    Node *_lastHoveredNode{};
+    PortType m_required_port_;
 };
 
 #endif // CONNECTIONSTATE_H

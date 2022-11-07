@@ -61,3 +61,8 @@ NodeDataType ImageShowModel::dataType(PortType, PortIndex) const
 {
     return PixmapData().type();
 }
+
+std::shared_ptr<NodeData> ImageShowModel::outData(PortIndex port)
+{
+    return _nodeData;
+}

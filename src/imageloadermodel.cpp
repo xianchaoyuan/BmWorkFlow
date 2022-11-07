@@ -68,3 +68,8 @@ NodeDataType ImageLoaderModel::dataType(PortType, PortIndex) const
 {
     return PixmapData().type();
 }
+
+std::shared_ptr<NodeData> ImageLoaderModel::outData(PortIndex port)
+{
+    return std::make_shared<PixmapData>(_pixmap);
+}

@@ -1,5 +1,6 @@
 #include "connection.h"
 #include "node.h"
+#include "nodedatamodel.h"
 #include "nodegraphicsobject.h"
 
 Connection::Connection(PortType portType, Node &node, PortIndex portIndex)
@@ -10,6 +11,16 @@ Connection::Connection(PortType portType, Node &node, PortIndex portIndex)
 {
     setNodeToPort(node, portType, portIndex);
     setRequiredPort(oppositePort(portType));
+}
+
+const ConnectionState &Connection::connectionState() const
+{
+    return m_state_;
+}
+
+ConnectionState &Connection::connectionState()
+{
+    return m_state_;
 }
 
 ConnectionGeometry &Connection::connectionGeometry()
@@ -93,25 +104,24 @@ Node *&Connection::getNode(PortType portType)
     Q_UNREACHABLE();
 }
 
-PortIndex Connection::getPortIndex(PortType portType) const
+void Connection::setNodeToPort(Node &node, PortType portType, PortIndex portIndex)
 {
-    PortIndex result = INVALID;
-    switch (portType)
-    {
-    case PortType::In:
-        result = m_in_port_index_;
-        break;
+    auto &nodeWeak = getNode(portType);
+    nodeWeak = &node;
 
-    case PortType::Out:
-        result = m_out_port_index_;
+    if (portType == PortType::Out)
+        m_out_port_index_ = portIndex;
+    else
+        m_in_port_index_ = portIndex;
+}
 
-        break;
+void Connection::removeFromNodes() const
+{
+    if (m_in_node_)
+        m_in_node_->nodeState().eraseConnection(PortType::In, m_in_port_index_, id());
 
-    default:
-        break;
-    }
-
-    return result;
+    if (m_out_node_)
+        m_out_node_->nodeState().eraseConnection(PortType::Out, m_out_port_index_, id());
 }
 
 void Connection::setRequiredPort(PortType portType)
@@ -140,19 +150,62 @@ PortType Connection::requiredPort() const
     return m_state_.requiredPort();
 }
 
-bool Connection::complete() const
+PortIndex Connection::getPortIndex(PortType portType) const
 {
-    return m_in_node_ != nullptr && m_out_node_ != nullptr;
+    PortIndex result = INVALID;
+    switch (portType)
+    {
+    case PortType::In:
+        result = m_in_port_index_;
+        break;
+
+    case PortType::Out:
+        result = m_out_port_index_;
+
+        break;
+
+    default:
+        break;
+    }
+
+    return result;
 }
 
-void Connection::setNodeToPort(Node &node, PortType portType, PortIndex portIndex)
+NodeDataType Connection::dataType(PortType portType) const
 {
-    auto &nodeWeak = getNode(portType);
-    nodeWeak = &node;
+    if (m_in_node_ && m_out_node_) {
+        auto const &model = (portType == PortType::In) ?
+                    m_in_node_->nodeDataModel() :
+                    m_out_node_->nodeDataModel();
+        PortIndex index = (portType == PortType::In) ?
+                    m_in_port_index_ :
+                    m_out_port_index_;
 
-    if (portType == PortType::Out)
-        m_out_port_index_ = portIndex;
-    else
-        m_in_port_index_ = portIndex;
+        return model->dataType(portType, index);
+    } else {
+        Node *validNode;
+        PortIndex index = INVALID;
+
+        if ((validNode = m_in_node_)) {
+            index    = m_in_port_index_;
+            portType = PortType::In;
+        } else if ((validNode = m_out_node_)) {
+            index    = m_out_port_index_;
+            portType = PortType::Out;
+        }
+
+        if (validNode) {
+            auto const &model = validNode->nodeDataModel();
+            return model->dataType(portType, index);
+        }
+    }
+
+    Q_UNREACHABLE();
 }
+
+void Connection::setTypeConverter(TypeConverter converter)
+{
+    m_converter_ = std::move(converter);
+}
+
 

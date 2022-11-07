@@ -1,6 +1,8 @@
 #ifndef NODEDATAMODEL_H
 #define NODEDATAMODEL_H
 
+#include <memory>
+
 #include <QObject>
 
 #include "nodedata.h"
@@ -32,6 +34,9 @@ public:
     //! 端口标题在GUI中用于标记各个端口
     virtual QString portCaption(PortType, PortIndex) const { return QString(); }
     virtual bool portCaptionVisible(PortType, PortIndex) const { return false; }
+
+    //! 获取输出数据
+    virtual std::shared_ptr<NodeData> outData(PortIndex port) = 0;
 
     //! 独一无二的名字（不能重复）
     virtual QString name() const = 0;
