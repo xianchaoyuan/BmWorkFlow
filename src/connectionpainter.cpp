@@ -14,7 +14,7 @@ static QPainterPath cubicPath(ConnectionGeometry const &geom)
 
     auto c1c2 = geom.pointsC1C2();
 
-    // cubic spline
+    // 贝塞尔曲线
     QPainterPath cubic(source);
     cubic.cubicTo(c1c2.first, c1c2.second, sink);
 

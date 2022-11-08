@@ -41,11 +41,6 @@ public:
     //! 独一无二的名字（不能重复）
     virtual QString name() const = 0;
 
-    //! 嵌入的小部件使用此函数创建，而不是构造函数
-    virtual QWidget *embeddedWidget() = 0;
-
-    virtual bool resizable() const { return true; }
-
     virtual QString validationMessage() const { return QString(""); }
     virtual NodeValidationState validationState() const { return NodeValidationState::Valid; }
 

@@ -31,7 +31,7 @@ unsigned int ImageShowModel::nPorts(PortType portType) const
         break;
 
     case PortType::Out:
-        result = 0;
+        result = 2;
 
     default:
         break;

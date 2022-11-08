@@ -32,10 +32,6 @@ public:
 
     std::shared_ptr<NodeData> outData(PortIndex port) override;
 
-    QWidget *embeddedWidget() override { return _label; }
-
-    bool resizable() const override { return true; }
-
 protected:
     bool eventFilter(QObject *object, QEvent *event) override;
 

@@ -4,8 +4,7 @@
 
 NodeState::NodeState(const std::unique_ptr<NodeDataModel> &model)
     : m_in_connections_(model->nPorts(PortType::In)),
-      m_out_connections_(model->nPorts(PortType::Out)),
-      m_resizing_(false)
+      m_out_connections_(model->nPorts(PortType::Out))
 {
 
 }
@@ -42,14 +41,4 @@ void NodeState::setConnection(PortType portType, PortIndex portIndex, Connection
 void NodeState::eraseConnection(PortType portType, PortIndex portIndex, QUuid id)
 {
     getEntries(portType)[portIndex].erase(id);
-}
-
-void NodeState::setResizing(bool resizing)
-{
-    m_resizing_ = resizing;
-}
-
-bool NodeState::resizing() const
-{
-    return m_resizing_;
 }

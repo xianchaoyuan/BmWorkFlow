@@ -31,16 +31,9 @@ public:
     void setConnection(PortType portType, PortIndex portIndex, Connection &connection);
     void eraseConnection(PortType portType, PortIndex portIndex, QUuid id);
 
-public:
-    //! 大小调整
-    void setResizing(bool resizing);
-    bool resizing() const;
-
 private:
     std::vector<ConnectionPtrSet> m_in_connections_;
     std::vector<ConnectionPtrSet> m_out_connections_;
-
-    bool m_resizing_;
 };
 
 #endif // NODESTATE_H

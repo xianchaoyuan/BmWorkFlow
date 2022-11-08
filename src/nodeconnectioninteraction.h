@@ -32,6 +32,10 @@ public:
     //! 用于启动数据传输的Poke模型
     bool tryConnect() const;
 
+    //! 1） 节点和连接应已连接
+    //! 2） 如果是，请清除NodeState中的Connection条目
+    //! 3） 将无效数据传播到IN节点
+    //! 4） 将连接端设置为“需要端口”
     bool disconnect(PortType portToDisconnect) const;
 
 private:

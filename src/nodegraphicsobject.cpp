@@ -104,16 +104,6 @@ void NodeGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
             }
         }
     }
-
-    // resizing
-    auto pos = event->pos();
-    auto &geom = m_node_.nodeGeometry();
-    auto &state = m_node_.nodeState();
-
-    if (m_node_.nodeDataModel()->resizable() &&
-            geom.resizeRect().contains(pos.toPoint())) {
-        state.setResizing(true);
-    }
 }
 
 void NodeGraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -123,27 +113,7 @@ void NodeGraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         m_scene_.clearSelection();
         setSelected(true);
     }
-
-    auto &geom  = m_node_.nodeGeometry();
-    auto &state = m_node_.nodeState();
-
-    if (state.resizing()) {
-        auto diff = event->pos() - event->lastPos();
-        // 没有嵌入窗体的node不可改变大小
-        if (auto *widget = m_node_.nodeDataModel()->embeddedWidget()) {
-            prepareGeometryChange();
-
-            auto size = widget->size();
-            size += QSize(diff.x(), diff.y());
-            widget->setFixedSize(size);
-
-            update();
-            moveConnections();
-            event->accept();
-        }
-    } else {
-        QGraphicsObject::mouseMoveEvent(event);
-    }
+    QGraphicsObject::mouseMoveEvent(event);
 
     QRectF rect = scene()->sceneRect();
     rect.united(mapToScene(boundingRect()).boundingRect());
@@ -152,9 +122,6 @@ void NodeGraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void NodeGraphicsObject::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    auto &state = m_node_.nodeState();
-    state.setResizing(false);
-
     QGraphicsObject::mouseReleaseEvent(event);
 
     moveConnections();
@@ -182,21 +149,6 @@ void NodeGraphicsObject::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     m_node_.nodeGeometry().setHovered(false);
     update();
-
-    event->accept();
-}
-
-void NodeGraphicsObject::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
-{
-    auto pos   = event->pos();
-    auto &geom = m_node_.nodeGeometry();
-
-    if (m_node_.nodeDataModel()->resizable() &&
-            geom.resizeRect().contains(QPoint(pos.x(), pos.y()))) {
-        setCursor(QCursor(Qt::SizeFDiagCursor));
-    } else {
-        setCursor(QCursor());
-    }
 
     event->accept();
 }

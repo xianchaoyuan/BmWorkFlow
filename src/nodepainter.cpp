@@ -12,7 +12,7 @@ void NodePainter::paint(QPainter *painter, Node &node, const FlowScene &scene)
     const NodeGraphicsObject &graphicsObject = node.nodeGraphicsObject();
 
     geom.recalculateSize(painter->font());
-    NodeDataModel const *model = node.nodeDataModel();
+    const NodeDataModel *model = node.nodeDataModel();
 
     drawNodeRect(painter, geom, model, graphicsObject);
     drawNodeCaption(painter, geom, model);
@@ -20,9 +20,7 @@ void NodePainter::paint(QPainter *painter, Node &node, const FlowScene &scene)
     drawConnectionPoints(painter, geom, state, model, scene);
     drawFilledConnectionPoints(painter, geom, state, model);
 
-    drawEntryLabels(painter, geom, model);
-
-    drawResizeRect(painter, geom, model);
+    drawEntryLabels(painter, geom, state, model);
 }
 
 void NodePainter::drawNodeRect(QPainter *painter, const NodeGeometry &geom, const NodeDataModel *model, const NodeGraphicsObject &graphicsObject)
@@ -32,7 +30,7 @@ void NodePainter::drawNodeRect(QPainter *painter, const NodeGeometry &geom, cons
             : Qt::gray;
 
     if (geom.hovered()) {
-        QPen p(color, 4);
+        QPen p(color, 3);
         painter->setPen(p);
     } else {
         QPen p(color, 2);
@@ -45,10 +43,8 @@ void NodePainter::drawNodeRect(QPainter *painter, const NodeGeometry &geom, cons
     gradient.setColorAt(1.0, Qt::darkCyan);
     painter->setBrush(gradient);
 
-    float diam = 4;
-    QRectF boundary( 0, 0, geom.width(), geom.height());
-
     const double radius = 3.0;
+    QRectF boundary( 0, 0, geom.width(), geom.height());
     painter->drawRoundedRect(boundary, radius, radius);
 }
 
@@ -57,14 +53,12 @@ void NodePainter::drawNodeCaption(QPainter *painter, const NodeGeometry &geom, c
     if (!model->captionVisible())
         return;
 
-    QString const &name = model->caption();
-
     QFont f = painter->font();
     f.setBold(true);
 
     QFontMetrics metrics(f);
+    const QString &name = model->caption();
     auto rect = metrics.boundingRect(name);
-
     QPointF position((geom.width() - rect.width()) / 2.0,
                      (geom.spacing() + geom.entryHeight()) / 3.0);
 
@@ -76,12 +70,45 @@ void NodePainter::drawNodeCaption(QPainter *painter, const NodeGeometry &geom, c
     painter->setFont(f);
 }
 
-void NodePainter::drawEntryLabels(QPainter *painter, const NodeGeometry &geom, const NodeDataModel *model)
+void NodePainter::drawEntryLabels(QPainter *painter, const NodeGeometry &geom, const NodeState &state, const NodeDataModel *model)
 {
     const QFontMetrics &metrics = painter->fontMetrics();
 
-    for (auto type : { PortType::In, PortType::Out }) {
+    for (auto &portType : { PortType::In, PortType::Out }) {
+        auto &entries = state.getEntries(portType);
 
+        size_t n = entries.size();
+        for (size_t i = 0; i < n; ++i) {
+            QPointF p = geom.portScenePosition(static_cast<PortIndex>(i), portType);
+            if (entries[i].empty())
+                painter->setPen(Qt::green);
+            else
+                painter->setPen(Qt::black);
+
+            QString s;
+            if (model->portCaptionVisible(portType, static_cast<PortIndex>(i))) {
+                s = model->portCaption(portType, static_cast<PortIndex>(i));
+            } else {
+                s = model->dataType(portType, static_cast<int>(i)).name;
+            }
+
+            auto rect = metrics.boundingRect(s);
+            p.setY(p.y() + rect.height() / 4.0);
+
+            switch (portType) {
+            case PortType::In:
+                p.setX(8.0);
+                break;
+            case PortType::Out:
+                p.setX(geom.width() - 8.0 - rect.width());
+                break;
+
+            default:
+                break;
+            }
+
+            painter->drawText(p, s);
+        }
     }
 }
 
@@ -106,12 +133,4 @@ void NodePainter::drawConnectionPoints(QPainter *painter, const NodeGeometry &ge
 void NodePainter::drawFilledConnectionPoints(QPainter *painter, const NodeGeometry &geom, const NodeState &state, const NodeDataModel *model)
 {
 
-}
-
-void NodePainter::drawResizeRect(QPainter *painter, const NodeGeometry &geom, const NodeDataModel *model)
-{
-    if (model->resizable()) {
-        painter->setBrush(Qt::gray);
-        painter->drawEllipse(geom.resizeRect());
-    }
 }

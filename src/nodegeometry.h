@@ -48,7 +48,6 @@ public:
 
 public:
     QRectF boundingRect() const;
-    QRect resizeRect() const;
 
     //! 无条件更新大小
     void recalculateSize() const;

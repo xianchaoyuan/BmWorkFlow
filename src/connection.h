@@ -51,7 +51,7 @@ public:
     Node* &getNode(PortType portType);
     void setNodeToPort(Node &node, PortType portType, PortIndex portIndex);
     void removeFromNodes() const;
-    //! 断开连接中的某个node
+    //! 断开连接侧
     void clearNode(PortType portType);
 
     void setRequiredPort(PortType portType);

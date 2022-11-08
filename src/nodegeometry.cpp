@@ -31,15 +31,6 @@ QRectF NodeGeometry::boundingRect() const
                   m_height_ + 2 * addon);
 }
 
-QRect NodeGeometry::resizeRect() const
-{
-    unsigned int rectSize = 7;
-    return QRect(m_width_ - rectSize,
-                 m_height_ - rectSize,
-                 rectSize,
-                 rectSize);
-}
-
 void NodeGeometry::recalculateSize() const
 {
     // height
@@ -50,10 +41,6 @@ void NodeGeometry::recalculateSize() const
         unsigned int step = m_entry_height_ + m_spacing_;
         m_height_ = step * maxNumOfEntries;
     }
-
-    if (auto w = m_data_model_->embeddedWidget()) {
-        m_height_ = std::max(m_height_, static_cast<unsigned>(w->height()));
-    }
     m_height_ += captionHeight();
 
     // width
@@ -63,11 +50,9 @@ void NodeGeometry::recalculateSize() const
     m_width_ = m_input_port_width_ +
             m_output_port_width_ +
             2 * m_spacing_;
-
-    if (auto w = m_data_model_->embeddedWidget()) {
-        m_width_ += w->width();
-    }
     m_width_ = std::max(m_width_, captionWidth());
+    // 扩大宽度，将caption显示美化
+    m_width_ += 20;
 
     // validation
     if (m_data_model_->validationState() != NodeValidationState::Valid) {
@@ -101,6 +86,9 @@ QPointF NodeGeometry::portScenePosition(PortIndex index, PortType portType, cons
     totalHeight += captionHeight();
     totalHeight += step * index;
 
+    // 防止与caption重合
+    totalHeight += step / 2.0;
+
     switch (portType) {
     case PortType::Out: {
         double x = m_width_;
@@ -126,14 +114,14 @@ PortIndex NodeGeometry::checkHitScenePoint(PortType portType, const QPointF &sce
     if (portType == PortType::None)
         return result;
 
-    const double tolerance = 2.0 * 8.0;
+    const double tolerance = 8.0;
     unsigned int const nItems = m_data_model_->nPorts(portType);
 
     for (unsigned int i = 0; i < nItems; ++i) {
         auto pp = portScenePosition(i, portType, sceneTransform);
 
         QPointF p = pp - scenePoint;
-        auto    distance = std::sqrt(QPointF::dotProduct(p, p));
+        auto distance = std::sqrt(QPointF::dotProduct(p, p));
 
         if (distance < tolerance) {
             result = PortIndex(i);
@@ -168,7 +156,6 @@ unsigned int NodeGeometry::portWidth(PortType portType) const
 
     for (auto i = 0; i < m_data_model_->nPorts(portType); ++i) {
         QString name;
-
         if (m_data_model_->portCaptionVisible(portType, i)) {
             name = m_data_model_->portCaption(portType, i);
         } else {

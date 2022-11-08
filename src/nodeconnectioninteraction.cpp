@@ -26,7 +26,7 @@ bool NodeConnectionInteraction::canConnection(PortIndex &portIndex, TypeConverte
         return false;
     }
 
-    // 连接点位于节点端口的顶部
+    // 查找近距离内连接点
     QPointF connectionPoint = connectionEndScenePosition(requiredType);
     portIndex = nodePortIndexUnderScenePoint(requiredType,
                                              connectionPoint);
@@ -77,7 +77,7 @@ bool NodeConnectionInteraction::tryConnect() const
     // 将连接分配给NodeState中的空端口
     m_connection_->setNodeToPort(*m_node_, requiredType, portIndex);
 
-    // 调整连接几何图形
+    // 刷新连接线
     m_node_->nodeGraphicsObject().moveConnections();
 
     // 用于初始化数据传输的Poke模型

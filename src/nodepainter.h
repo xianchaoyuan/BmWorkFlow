@@ -31,9 +31,10 @@ public:
                               const NodeGeometry &geom,
                               const NodeDataModel *model);
 
-    //! 条目标签
+    //! 端口标签
     static void drawEntryLabels(QPainter *painter,
                                 const NodeGeometry &geom,
+                                const NodeState &state,
                                 const NodeDataModel *model);
 
     //! 连接点
@@ -48,11 +49,6 @@ public:
                                            const NodeGeometry &geom,
                                            const NodeState &state,
                                            const NodeDataModel *model);
-
-    //! resize边框
-    static void drawResizeRect(QPainter *painter,
-                               const NodeGeometry &geom,
-                               const NodeDataModel *model);
 };
 
 #endif // NODEPAINTER_H
