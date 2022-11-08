@@ -113,6 +113,8 @@ void Connection::setNodeToPort(Node &node, PortType portType, PortIndex portInde
         m_out_port_index_ = portIndex;
     else
         m_in_port_index_ = portIndex;
+
+    m_state_.setNoRequiredPort();
 }
 
 void Connection::removeFromNodes() const
@@ -122,6 +124,19 @@ void Connection::removeFromNodes() const
 
     if (m_out_node_)
         m_out_node_->nodeState().eraseConnection(PortType::Out, m_out_port_index_, id());
+}
+
+void Connection::clearNode(PortType portType)
+{
+    // BmTODO 如果连接完整，则通知外部断开连接
+
+    getNode(portType) = nullptr;
+
+    if (portType == PortType::In) {
+        m_in_port_index_ = INVALID;
+    } else {
+        m_out_port_index_ = INVALID;
+    }
 }
 
 void Connection::setRequiredPort(PortType portType)

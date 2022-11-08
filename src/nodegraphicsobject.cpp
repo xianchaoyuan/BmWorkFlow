@@ -4,6 +4,7 @@
 #include "nodepainter.h"
 #include "nodestate.h"
 #include "connection.h"
+#include "nodeconnectioninteraction.h"
 
 NodeGraphicsObject::NodeGraphicsObject(FlowScene &scene, Node &node)
     : m_scene_(scene),
@@ -28,7 +29,7 @@ NodeGraphicsObject::~NodeGraphicsObject()
 
 void NodeGraphicsObject::moveConnections() const
 {
-    NodeState const &nodeState = m_node_.nodeState();
+    const NodeState &nodeState = m_node_.nodeState();
     for (PortType portType : { PortType::In, PortType::Out }) {
         const auto &connectionEntries =
                 nodeState.getEntries(portType);
@@ -57,44 +58,45 @@ void NodeGraphicsObject::paint(QPainter *painter,
 QVariant NodeGraphicsObject::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == ItemPositionChange && scene()) {
-        // BmTODO move connections
-
+        moveConnections();
     }
     return QGraphicsItem::itemChange(change, value);
 }
 
 void NodeGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    for (auto portType : { PortType::In, PortType::Out }) {
+    for (auto portToCheck : { PortType::In, PortType::Out }) {
         auto &nodeGeometry = m_node_.nodeGeometry();
 
-        const int portIndex = nodeGeometry.checkHitScenePoint(portType,
+        const int portIndex = nodeGeometry.checkHitScenePoint(portToCheck,
                                                               event->scenePos(),
                                                               sceneTransform());
         if (portIndex != INVALID) {
             const NodeState &nodeState = m_node_.nodeState();
-            std::unordered_map<QUuid, Connection *> connections = nodeState.connections(portType, portIndex);
+            std::unordered_map<QUuid, Connection *> connections = nodeState.connections(portToCheck, portIndex);
 
-            // start dragging existing connection
-            if (!connections.empty() && portType == PortType::In) {
-                // BmTODO移除连接
-                auto con = connections.begin()->second;
-
+            // 拖动现有连接
+            if (!connections.empty() && portToCheck == PortType::In) {
+                // 移除连接
+                auto connection = connections.begin()->second;
+                NodeConnectionInteraction interaction(m_node_, *connection, m_scene_);
+                interaction.disconnect(portToCheck);
             } else {
-                if (portType == PortType::Out) {
+                if (portToCheck == PortType::Out) {
                     const auto outPolicy = m_node_.nodeDataModel()->portOutConnectionPolicy(portIndex);
+                    // 如果输出端连接策略为One，则删除当前连接
                     if (!connections.empty() &&
                             outPolicy == NodeDataModel::ConnectionPolicy::One) {
-                        //                        m_scene_.deleteConnection(*connections.begin()->second);
+                        m_scene_.deleteConnection(*connections.begin()->second);
                     }
                 }
 
-                // todo add to FlowScene
-                auto connection = m_scene_.createConnection(portType,
+                // 添加新连接
+                auto connection = m_scene_.createConnection(portToCheck,
                                                             m_node_,
                                                             portIndex);
 
-                m_node_.nodeState().setConnection(portType,
+                m_node_.nodeState().setConnection(portToCheck,
                                                   portIndex,
                                                   *connection);
 
@@ -116,6 +118,7 @@ void NodeGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void NodeGraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    // BmTODO 使用Qt自带选中切换
     if (!isSelected()) {
         m_scene_.clearSelection();
         setSelected(true);
@@ -135,18 +138,11 @@ void NodeGraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             widget->setFixedSize(size);
 
             update();
+            moveConnections();
+            event->accept();
         }
-
-        event->accept();
     } else {
         QGraphicsObject::mouseMoveEvent(event);
-
-        // 刷新连接
-        if (event->lastPos() != event->pos()) {
-            moveConnections();
-        }
-
-        event->ignore();
     }
 
     QRectF rect = scene()->sceneRect();
@@ -204,3 +200,18 @@ void NodeGraphicsObject::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
     event->accept();
 }
+
+void NodeGraphicsObject::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    // BmTODO添加双击打开属性界面
+
+    QGraphicsItem::mouseDoubleClickEvent(event);
+}
+
+void NodeGraphicsObject::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    // BmTODO添加右键菜单
+
+    QGraphicsItem::contextMenuEvent(event);
+}
+

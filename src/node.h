@@ -43,7 +43,7 @@ public slots:
     void onDataUpdated(PortIndex index);
 
 private:
-    //! 声明顺序不可改变
+    //! 声明顺序不要随意改变
     std::unique_ptr<NodeDataModel> m_data_model_;
     std::unique_ptr<NodeGraphicsObject> m_graphics_object_;
 

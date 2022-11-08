@@ -78,11 +78,11 @@ void FlowScene::deleteConnection(const Connection &connection)
 void FlowScene::clearScene()
 {
     while (m_connections_.size() > 0) {
-
+        deleteConnection(*m_connections_.begin()->second);
     }
 
     while (m_nodes_.size() > 0) {
-
+        removeNode(*m_nodes_.begin()->second);
     }
 }
 

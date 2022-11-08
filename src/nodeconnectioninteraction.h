@@ -32,6 +32,8 @@ public:
     //! 用于启动数据传输的Poke模型
     bool tryConnect() const;
 
+    bool disconnect(PortType portToDisconnect) const;
+
 private:
     //! 需要端口类型
     PortType connectionRequiredPort() const;

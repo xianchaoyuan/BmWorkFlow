@@ -90,6 +90,26 @@ bool NodeConnectionInteraction::tryConnect() const
     return true;
 }
 
+bool NodeConnectionInteraction::disconnect(PortType portToDisconnect) const
+{
+    PortIndex portIndex = m_connection_->getPortIndex(portToDisconnect);
+
+    NodeState &state = m_node_->nodeState();
+
+    // 清除指向节点状态中连接的指针
+    state.getEntries(portToDisconnect)[portIndex].erase(m_connection_->id());
+
+    // 将无效数据传播到IN节点
+//    m_connection_->
+
+    // 清除连接侧
+    m_connection_->clearNode(portToDisconnect);
+    m_connection_->setRequiredPort(portToDisconnect);
+    m_connection_->connectionGraphicsObject().grabMouse();
+
+    return true;
+}
+
 PortType NodeConnectionInteraction::connectionRequiredPort() const
 {
     const auto &state = m_connection_->connectionState();
@@ -139,8 +159,8 @@ bool NodeConnectionInteraction::nodePortIsEmpty(PortType portType, PortIndex por
     {
         const auto *const currentConn = connection.second;
 
-        Q_ASSERT(!m_connection_->getNode(sourcePortType));
-        Q_ASSERT(!currentConn->getNode(sourcePortType));
+        Q_ASSERT(m_connection_->getNode(sourcePortType));
+        Q_ASSERT(currentConn->getNode(sourcePortType));
         return m_connection_->getNode(sourcePortType) == currentConn->getNode(sourcePortType) &&
                 m_connection_->getPortIndex(sourcePortType) == currentConn->getPortIndex(sourcePortType);
 

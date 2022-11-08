@@ -26,6 +26,7 @@ public:
 
     //! 是否需要连接端口
     bool requiresPort() const { return m_required_port_ != PortType::None; }
+    void setNoRequiredPort() { m_required_port_ = PortType::None; }
 
 private:
     PortType m_required_port_;

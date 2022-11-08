@@ -1,9 +1,9 @@
 #ifndef NODEGRAPHICSOBJECT_H
 #define NODEGRAPHICSOBJECT_H
 
+#include <QPainter>
 #include <QGraphicsObject>
 #include <QGraphicsSceneEvent>
-#include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
 class FlowScene;
@@ -27,6 +27,7 @@ public:
     Node &node() { return m_node_; }
     const Node &node() const { return m_node_; }
 
+    //! 更新连接线
     void moveConnections() const;
 
 protected:
@@ -41,6 +42,9 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
+
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 private:
     FlowScene &m_scene_;

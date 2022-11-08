@@ -33,7 +33,7 @@ ConnectionGraphicsObject::~ConnectionGraphicsObject()
 
 void ConnectionGraphicsObject::move()
 {
-    for (PortType portType: { PortType::In, PortType::Out } ) {
+    for (PortType portType : { PortType::In, PortType::Out } ) {
         if (auto node = m_connection_.getNode(portType)) {
             const auto &nodeGraphics = node->nodeGraphicsObject();
             const auto &nodeGeom = node->nodeGeometry();
