@@ -39,8 +39,14 @@ public:
     NodeDataModel *nodeDataModel() const;
 
 public slots:
+    //! 将传入数据传播到基础模型。
+    void propagateData(std::shared_ptr<NodeData> nodeData,
+                       PortIndex inPortIndex,
+                       const QUuid &connectionId) const;
+
     //! 从模型的out索引端口获取数据并将其传播到连接
     void onDataUpdated(PortIndex index);
+    void onDataInvalidated(PortIndex index);
 
 private:
     //! 声明顺序不要随意改变

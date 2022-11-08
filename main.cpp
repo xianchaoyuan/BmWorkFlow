@@ -3,16 +3,16 @@
 
 #include "flowscene.h"
 #include "flowview.h"
-#include "imageloadermodel.h"
-#include "imageshowmodel.h"
+#include "bmtestloadmodel.h"
+#include "bmtestshowmodel.h"
 
 static std::shared_ptr<DataModelRegistry> registerDataModels()
 {
     auto ret = std::make_shared<DataModelRegistry>();
 
     // BmTODO 添加需要注册的model
-    ret->registerModel<ImageLoaderModel>();
-    ret->registerModel<ImageShowModel>();
+    ret->registerModel<BmTestLoadModel>();
+    ret->registerModel<BmTestShowModel>();
 
     return ret;
 }

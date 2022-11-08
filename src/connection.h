@@ -25,10 +25,9 @@ class Connection : public QObject
 
 public:
     Connection(PortType portType, Node &node, PortIndex portIndex);
-    ~Connection() = default;
-
     Connection(const Connection &other) = delete;
     Connection operator=(const Connection &other) = delete;
+    ~Connection() override;
 
     //! state
     const ConnectionState &connectionState() const;
@@ -61,6 +60,10 @@ public:
 
     //! 节点数据类型
     NodeDataType dataType(PortType portType) const;
+
+public:
+    void propagateData(std::shared_ptr<NodeData> nodeData) const;
+    void propagateEmptyData() const;
 
     //! 类型转换器
     void setTypeConverter(TypeConverter converter);

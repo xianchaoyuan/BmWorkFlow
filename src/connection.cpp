@@ -13,6 +13,18 @@ Connection::Connection(PortType portType, Node &node, PortIndex portIndex)
     setRequiredPort(oppositePort(portType));
 }
 
+Connection::~Connection()
+{
+    if (m_in_node_) {
+        m_in_node_->nodeGraphicsObject().update();
+    }
+
+    if (m_out_node_) {
+        propagateEmptyData();
+        m_out_node_->nodeGraphicsObject().update();
+    }
+}
+
 const ConnectionState &Connection::connectionState() const
 {
     return m_state_;
@@ -216,6 +228,23 @@ NodeDataType Connection::dataType(PortType portType) const
     }
 
     Q_UNREACHABLE();
+}
+
+void Connection::propagateData(std::shared_ptr<NodeData> nodeData) const
+{
+    if (m_in_node_) {
+        if (m_converter_) {
+            nodeData = m_converter_(nodeData);
+        }
+
+        m_in_node_->propagateData(nodeData, m_in_port_index_, id());
+    }
+}
+
+void Connection::propagateEmptyData() const
+{
+    std::shared_ptr<NodeData> emptyData;
+    propagateData(emptyData);
 }
 
 void Connection::setTypeConverter(TypeConverter converter)

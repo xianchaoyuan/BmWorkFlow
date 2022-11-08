@@ -1,6 +1,5 @@
 #include "nodestate.h"
 #include "nodedatamodel.h"
-#include "connection.h"
 
 NodeState::NodeState(const std::unique_ptr<NodeDataModel> &model)
     : m_in_connections_(model->nPorts(PortType::In)),

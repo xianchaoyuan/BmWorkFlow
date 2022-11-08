@@ -54,8 +54,8 @@ set(CPP_SOURCE_FILES
     src/flowview.cpp
 
     # 测试
-    src/imageshowmodel.cpp
-    src/imageloadermodel.cpp
+    src/bmtestloadmodel.cpp
+    src/bmtestshowmodel.cpp
 )
 
 add_executable(${PROJECT_NAME}

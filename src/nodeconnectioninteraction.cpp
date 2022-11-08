@@ -100,7 +100,7 @@ bool NodeConnectionInteraction::disconnect(PortType portToDisconnect) const
     state.getEntries(portToDisconnect)[portIndex].erase(m_connection_->id());
 
     // 将无效数据传播到IN节点
-//    m_connection_->
+    m_connection_->propagateEmptyData();
 
     // 清除连接侧
     m_connection_->clearNode(portToDisconnect);

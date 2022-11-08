@@ -9,8 +9,8 @@
 
 #include "porttype.h"
 #include "memory.h"
+#include "connection.h"
 
-class Connection;
 class NodeDataModel;
 
 /**

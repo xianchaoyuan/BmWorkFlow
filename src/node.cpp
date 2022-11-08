@@ -11,6 +11,13 @@ Node::Node(std::unique_ptr<NodeDataModel> &&dataModel)
       m_graphics_object_(nullptr)
 {
     m_geometry_.recalculateSize();
+
+    // propagate data: model => node
+    connect(m_data_model_.get(), &NodeDataModel::dataUpdated,
+            this, &Node::onDataUpdated);
+
+    connect(m_data_model_.get(), &NodeDataModel::dataInvalidated,
+            this, &Node::onDataInvalidated);
 }
 
 const QUuid &Node::id() const
@@ -59,13 +66,29 @@ NodeDataModel *Node::nodeDataModel() const
     return m_data_model_.get();
 }
 
+void Node::propagateData(std::shared_ptr<NodeData> nodeData, PortIndex inPortIndex, const QUuid &connectionId) const
+{
+    m_data_model_->setInData(std::move(nodeData), inPortIndex, connectionId);
+
+    m_geometry_.recalculateSize();
+    m_graphics_object_->update();
+    m_graphics_object_->moveConnections();
+}
+
 void Node::onDataUpdated(PortIndex index)
 {
     auto nodeData = m_data_model_->outData(index);
-
     const auto &connections =
             m_state_.connections(PortType::Out, index);
 
-//    for (const auto &c : connections)
-//        c.second->propagateData(nodeData);
+    for (const auto &c : connections)
+        c.second->propagateData(nodeData);
+}
+
+void Node::onDataInvalidated(PortIndex index)
+{
+    const auto &connections = m_state_.connections(PortType::Out, index);
+    for (auto &conn : connections) {
+        conn.second->propagateEmptyData();
+    }
 }
