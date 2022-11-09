@@ -1,6 +1,11 @@
-<RCC version="1.0">
-    <qresource>
-        <file>DefaultStyle.json</file>
+<RCC>
+    <qresource prefix="/">
+		<file>flowstyle.json</file>
         <file>convert.png</file>
+	
+        <file>images/diagramitem_DataCollector.png</file>
+        <file>images/diagramitem_DataCollector_running.png</file>
+        <file>images/diagramitem_OPTIM.png</file>
+        <file>images/diagramitem_OPTIM_running.png</file>
     </qresource>
 </RCC>

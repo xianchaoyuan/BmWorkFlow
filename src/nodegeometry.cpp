@@ -19,7 +19,6 @@ NodeGeometry::NodeGeometry(const std::unique_ptr<NodeDataModel> &dataModel)
       m_font_metrics_(QFont()),
       m_bold_font_metrics_(QFont())
 {
-
 }
 
 QRectF NodeGeometry::boundingRect() const
@@ -58,6 +57,13 @@ void NodeGeometry::recalculateSize() const
     if (m_data_model_->validationState() != NodeValidationState::Valid) {
         m_width_   = std::max(m_width_, validationWidth());
         m_height_ += validationHeight() + m_spacing_;
+    }
+
+    // 如果有背景图，则使用图片大小
+    QPixmap bkgPixmap = m_data_model_->backgroundPixmap();
+    if (!bkgPixmap.isNull()) {
+        m_width_ = bkgPixmap.width();
+        m_height_ = bkgPixmap.height();
     }
 }
 

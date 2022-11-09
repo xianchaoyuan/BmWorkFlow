@@ -33,6 +33,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 file(GLOB_RECURSE CPP_HEADER_FILES
+    src/*.ui
     src/*.h)
 
 set(CPP_SOURCE_FILES
@@ -56,6 +57,9 @@ set(CPP_SOURCE_FILES
     # 测试
     src/bmtestloadmodel.cpp
     src/bmtestshowmodel.cpp
+
+    src/bmtestloadwidget.cpp
+    src/bmtestshowwidget.cpp
 )
 
 add_executable(${PROJECT_NAME}

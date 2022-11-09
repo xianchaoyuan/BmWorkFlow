@@ -12,7 +12,7 @@ Node::Node(std::unique_ptr<NodeDataModel> &&dataModel)
 {
     m_geometry_.recalculateSize();
 
-    // propagate data: model => node
+    // 数据传输 model->node
     connect(m_data_model_.get(), &NodeDataModel::dataUpdated,
             this, &Node::onDataUpdated);
 
@@ -49,6 +49,10 @@ void Node::setGraphicsObject(std::unique_ptr<NodeGraphicsObject> &&graphics)
 {
     m_graphics_object_ = std::move(graphics);
     m_geometry_.recalculateSize();
+
+    connect(m_graphics_object_.get(), &NodeGraphicsObject::openPropertyWidget, [this]() {
+        m_data_model_->propertyWidget()->show();
+    });
 }
 
 NodeState &Node::nodeState()

@@ -1,11 +1,14 @@
 #include "bmtestloadmodel.h"
 #include "bmtestdata.h"
+#include "bmtestloadwidget.h"
 
 #include <QTime>
 
 BmTestLoadModel::BmTestLoadModel()
 {
     m_text_ = "LoadModel" + QTime::currentTime().toString();
+    m_bkg_pixmap_.load(":/images/diagramitem_DataCollector.png");
+    m_property_widget_ = new BmTestLoadWidget();
 }
 
 unsigned int BmTestLoadModel::nPorts(PortType portType) const

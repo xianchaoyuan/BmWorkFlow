@@ -1,10 +1,13 @@
 #include "bmtestshowmodel.h"
 #include "bmtestdata.h"
+#include "bmtestshowwidget.h"
 
 #include <QDebug>
 
 BmTestShowModel::BmTestShowModel()
 {
+    m_bkg_pixmap_.load(":/images/diagramitem_OPTIM.png");
+    m_property_widget_ = new BmTestShowWidget();
 }
 
 unsigned int BmTestShowModel::nPorts(PortType portType) const
@@ -37,9 +40,10 @@ void BmTestShowModel::setInData(std::shared_ptr<NodeData> nodeData, PortIndex po
     if (m_node_data_) {
         qDebug() << nodeData->type().name;
         auto d = std::dynamic_pointer_cast<BmTestData>(m_node_data_);
-        qDebug() << "show model: " << d->text();
+        m_text_ = d->text();
     } else {
-
+        // BmTODO清空数据
+        m_text_ = QString{};
     }
 }
 

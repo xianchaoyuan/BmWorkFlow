@@ -20,6 +20,17 @@ public:
 
     static void paint(QPainter *painter, Node &node, FlowScene const &scene);
 
+    //! 数据流测试
+    static void drawTestText(QPainter *painter,
+                             const NodeGeometry &geom,
+                             const NodeDataModel *model);
+
+    //! 背景图
+    static void drawBackgroundPixmap(QPainter *painter,
+                                     const NodeGeometry &geom,
+                                     const NodeDataModel *model,
+                                     const NodeGraphicsObject &graphicsObject);
+
     //! 边框
     static void drawNodeRect(QPainter *painter,
                              const NodeGeometry &geom,
@@ -28,8 +39,8 @@ public:
 
     //! 模块说明
     static void drawNodeCaption(QPainter *painter,
-                              const NodeGeometry &geom,
-                              const NodeDataModel *model);
+                                const NodeGeometry &geom,
+                                const NodeDataModel *model);
 
     //! 端口标签
     static void drawEntryLabels(QPainter *painter,

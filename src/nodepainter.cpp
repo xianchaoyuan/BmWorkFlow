@@ -14,6 +14,10 @@ void NodePainter::paint(QPainter *painter, Node &node, const FlowScene &scene)
     geom.recalculateSize(painter->font());
     const NodeDataModel *model = node.nodeDataModel();
 
+#ifdef NODE_DEBUG_DRAWING
+    drawTestText(painter, geom, model);
+#endif
+
     drawNodeRect(painter, geom, model, graphicsObject);
     drawNodeCaption(painter, geom, model);
 
@@ -21,6 +25,18 @@ void NodePainter::paint(QPainter *painter, Node &node, const FlowScene &scene)
     drawFilledConnectionPoints(painter, geom, state, model);
 
     drawEntryLabels(painter, geom, state, model);
+//    drawBackgroundPixmap(painter, geom, model, graphicsObject);
+}
+
+void NodePainter::drawTestText(QPainter *painter, const NodeGeometry &geom, const NodeDataModel *model)
+{
+    painter->drawText(0, 0, model->getTestText());
+}
+
+void NodePainter::drawBackgroundPixmap(QPainter *painter, const NodeGeometry &geom, const NodeDataModel *model, const NodeGraphicsObject &graphicsObject)
+{
+    QPixmap bkgPixmap = model->backgroundPixmap();
+    painter->drawPixmap(QPointF(0, 0), bkgPixmap);
 }
 
 void NodePainter::drawNodeRect(QPainter *painter, const NodeGeometry &geom, const NodeDataModel *model, const NodeGraphicsObject &graphicsObject)
@@ -43,7 +59,7 @@ void NodePainter::drawNodeRect(QPainter *painter, const NodeGeometry &geom, cons
     gradient.setColorAt(1.0, Qt::darkCyan);
     painter->setBrush(gradient);
 
-    const double radius = 3.0;
+    const double radius = 8.0;
     QRectF boundary( 0, 0, geom.width(), geom.height());
     painter->drawRoundedRect(boundary, radius, radius);
 }

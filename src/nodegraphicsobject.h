@@ -45,6 +45,9 @@ protected:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
+signals:
+    void openPropertyWidget();
+
 private:
     FlowScene &m_scene_;
     Node &m_node_;

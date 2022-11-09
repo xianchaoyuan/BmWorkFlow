@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <QObject>
+#include <QPixmap>
 
 #include "nodedata.h"
 #include "porttype.h"
@@ -40,6 +41,13 @@ public:
 
     virtual QString validationMessage() const { return QString(""); }
     virtual NodeValidationState validationState() const { return NodeValidationState::Valid; }
+
+    //! 背景图片
+    virtual QPixmap backgroundPixmap() const { return QPixmap{}; }
+    virtual QString getTestText() const = 0;
+
+    //! 属性设置窗口
+    virtual QWidget *propertyWidget() const { return nullptr; }
 
 public:
     virtual void setInData(std::shared_ptr<NodeData> nodeData, PortIndex port) = 0;

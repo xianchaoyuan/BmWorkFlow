@@ -6,6 +6,8 @@
 #include "connection.h"
 #include "nodeconnectioninteraction.h"
 
+#include <QMenu>
+
 NodeGraphicsObject::NodeGraphicsObject(FlowScene &scene, Node &node)
     : m_scene_(scene),
       m_node_(node)
@@ -156,14 +158,20 @@ void NodeGraphicsObject::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void NodeGraphicsObject::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     // BmTODO添加双击打开属性界面
-
-    QGraphicsItem::mouseDoubleClickEvent(event);
+    emit openPropertyWidget();
+//    QGraphicsItem::mouseDoubleClickEvent(event);
 }
 
 void NodeGraphicsObject::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     // BmTODO添加右键菜单
+    QMenu menu;
 
-    QGraphicsItem::contextMenuEvent(event);
+    auto *deleteAction = new QAction(tr("&Delete"), this);
+    deleteAction->setShortcut(QKeySequence::Delete);
+    deleteAction->setStatusTip(tr("Delete item from diagram"));
+    menu.addAction(deleteAction);
+
+    menu.exec(event->screenPos());
 }
 
